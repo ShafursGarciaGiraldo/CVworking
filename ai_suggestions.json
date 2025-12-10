@@ -1,0 +1,171 @@
+{
+  "languages": {
+    "es": {
+      "summary_title": "Resumen Profesional",
+      "responsibilities_title": "Responsabilidades",
+      "achievements_title": "Logros",
+      "soft_skills_title": "Habilidades Blandas",
+      "keywords_title": "Palabras Clave"
+    },
+    "en": {
+      "summary_title": "Professional Summary",
+      "responsibilities_title": "Key Responsibilities",
+      "achievements_title": "Achievements",
+      "soft_skills_title": "Soft Skills",
+      "keywords_title": "Keywords"
+    }
+  },
+
+  "seniority": {
+    "junior": {
+      "es": "Profesional en desarrollo, con enfoque en aprendizaje continuo y apoyo a tareas operativas y técnicas.",
+      "en": "Entry-level professional focused on continuous learning and supporting operational and technical tasks."
+    },
+    "semi_senior": {
+      "es": "Profesional con autonomía funcional, capaz de ejecutar tareas complejas con supervisión mínima y aportar mejoras al equipo.",
+      "en": "Mid-level professional capable of executing complex tasks with minimal supervision and contributing process improvements."
+    },
+    "senior": {
+      "es": "Profesional experto, orientado a decisiones estratégicas, liderazgo técnico y dirección de proyectos.",
+      "en": "Senior-level professional oriented towards strategic decisions, technical leadership, and project direction."
+    }
+  },
+
+  "achievement_templates": {
+    "es": [
+      "Incrementé ___ en un ___% mediante ___.",
+      "Reduje el tiempo/costo de ___ en un ___%.",
+      "Implementé ___ logrando mejorar ___ en ___%.",
+      "Optimicé procesos de ___ obteniendo un ahorro mensual de ___.",
+      "Automatizé ___ reduciendo errores en ___%.",
+      "Mejoré la productividad del equipo en ___% mediante ___."
+    ],
+    "en": [
+      "Increased ___ by ___% through ___.",
+      "Reduced time/cost of ___ by ___%.",
+      "Implemented ___ improving ___ by ___%.",
+      "Optimized ___ processes, achieving a monthly saving of ___.",
+      "Automated ___ reducing errors by ___%.",
+      "Improved team productivity by ___% through ___."
+    ]
+  },
+
+  "web": {
+    "keywords": [
+      "HTML5", "CSS3", "JavaScript", "APIs REST", "Responsive Design",
+      "Clean Code", "TailwindCSS", "Three.js", "UI/UX", "SEO", "Git", "CI/CD"
+    ],
+    "soft_skills": [
+      "Comunicación efectiva",
+      "Resolución de problemas",
+      "Pensamiento lógico",
+      "Trabajo colaborativo",
+      "Adaptabilidad"
+    ],
+    "summary": [
+      "Desarrollador web enfocado en interfaces modernas, rápidas y centradas en el usuario.",
+      "Experiencia creando aplicaciones dinámicas con JavaScript, APIs y diseño responsivo."
+    ],
+    "responsibilities": [
+      "Construcción de interfaces responsivas con HTML5, CSS3, TailwindCSS y JavaScript moderno.",
+      "Desarrollo de aplicaciones web dinámicas con integración API REST.",
+      "Optimización del rendimiento utilizando lazy loading, minificación y buenas prácticas SEO.",
+      "Creación de componentes modulares aplicando principios DRY y Clean Code.",
+      "Integración de elementos visuales avanzados (Three.js, Canvas API).",
+      "Implementación de autenticación con JWT y OAuth.",
+      "Automatización de despliegues mediante pipelines CI/CD."
+    ],
+    "achievements": [
+      "Reducción del tiempo de carga en un 40% mediante optimización avanzada.",
+      "Incremento del 25% en retención de usuarios al mejorar flujos UI/UX.",
+      "Automatización de despliegues reduciendo errores humanos en un 95%."
+    ]
+  },
+
+  "minas": {
+    "keywords": [
+      "Geomecánica", "Perforación y Voladura", "Modelamiento 3D",
+      "Seguridad SSOMA", "Control geotécnico", "Operaciones Mineras",
+      "Vulcan", "Surpac", "AutoCAD", "Planificación Minera"
+    ],
+    "soft_skills": [
+      "Trabajo en campo",
+      "Gestión de riesgos",
+      "Disciplina operativa",
+      "Comunicación técnica",
+      "Resolución de problemas"
+    ],
+    "summary": [
+      "Estudiante/Profesional en Ingeniería de Minas con experiencia en operaciones y geotecnia.",
+      "Enfoque en optimización operativa, seguridad y análisis técnico."
+    ],
+    "responsibilities": [
+      "Supervisión de operaciones de perforación y voladura bajo estándares SSOMA.",
+      "Control de estabilidad de taludes y evaluación geomecánica.",
+      "Diseño de mallas de perforación y optimización de fragmentación.",
+      "Muestreo, análisis de leyes y elaboración de reportes técnicos.",
+      "Manejo de software especializado (Vulcan, Surpac, Datamine, AutoCAD).",
+      "Coordinación de actividades operativas minimizando riesgos.",
+      "Apoyo en planificación minera de corto y mediano plazo."
+    ],
+    "achievements": [
+      "Mejora del 15% en eficiencia operativa mediante análisis de T&M.",
+      "Reducción de incidentes operativos reforzando protocolos de seguridad.",
+      "Optimización de voladuras reduciendo costos en un 8%."
+    ]
+  },
+
+  "gestion": {
+    "keywords": [
+      "Liderazgo", "KPIs", "Lean", "Six Sigma", "Kaizen",
+      "Gestión de Proyectos", "PMI", "Budgets", "Optimización"
+    ],
+    "soft_skills": [
+      "Liderazgo situacional",
+      "Negociación",
+      "Comunicación efectiva",
+      "Gestión del tiempo",
+      "Pensamiento estratégico"
+    ],
+    "summary": [
+      "Profesional orientado a la gestión, análisis estratégico y mejora continua.",
+      "Experiencia en liderazgo, optimización de procesos y toma de decisiones basadas en datos."
+    ],
+    "responsibilities": [
+      "Liderar equipos multidisciplinarios orientados al cumplimiento de KPIs.",
+      "Optimizar procesos mediante metodologías Lean, Six Sigma y Kaizen.",
+      "Planificación de proyectos bajo estándares PMI.",
+      "Automatización de reportes y análisis de indicadores clave.",
+      "Gestión de recursos y elaboración de presupuestos."
+    ],
+    "achievements": [
+      "Reducción de costos operativos en un 18% mediante optimización.",
+      "Mejora del rendimiento del equipo en un 30% mediante liderazgo adaptativo.",
+      "Automatización de dashboards reduciendo tiempos de reporte en 70%."
+    ]
+  },
+
+  "general": {
+    "keywords": [
+      "Adaptabilidad", "Comunicación", "Trabajo en Equipo",
+      "Pensamiento Crítico", "Gestión del Tiempo"
+    ],
+    "soft_skills": [
+      "Responsabilidad",
+      "Organización",
+      "Aprendizaje rápido",
+      "Resolución de problemas",
+      "Trabajo colaborativo"
+    ],
+    "summary": [
+      "Profesional proactivo y adaptable, orientado al aprendizaje continuo.",
+      "Comprometido con la mejora constante, comunicación efectiva y trabajo en equipo."
+    ],
+    "strengths": [
+      "Análisis crítico",
+      "Gestión eficiente del tiempo",
+      "Capacidad para tomar decisiones basadas en datos",
+      "Orientación a resultados"
+    ]
+  }
+}
