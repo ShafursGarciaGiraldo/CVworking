@@ -1,0 +1,60 @@
+<!-- CHATBOT LEGENDARIO -->
+<div class="chatbot-container" aria-live="polite">
+  <button id="chatbot-toggle" class="chatbot-button" aria-label="Abrir chat">
+    💬
+  </button>
+
+  <div id="chatbot-window" class="chatbot-window hidden" role="dialog" aria-modal="false" aria-label="Asistente CVWORKING">
+    <div class="chatbot-header">
+      <div class="chatbot-title">
+        <img src="https://i.imgur.com/7kYjYdN.png" alt="Bot" class="header-avatar">
+        <div>
+          <h3>CVWORKING Assistant</h3>
+          <small id="bot-subtitle">Tu coach profesional — v2 LEGENDARY</small>
+        </div>
+      </div>
+      <div class="chat-controls">
+        <button id="theme-toggle" title="Cambiar tema">🌓</button>
+        <button id="chatbot-close" aria-label="Cerrar chat">✖</button>
+      </div>
+    </div>
+
+    <div id="chatbot-messages" class="chatbot-messages custom-scrollbar" tabindex="0" aria-live="polite"></div>
+
+    <div class="chatbot-toolbar">
+      <div id="suggestion-chips" class="suggestion-chips"></div>
+    </div>
+
+    <div class="chatbot-input-area">
+      <input id="chatbot-input" type="text" placeholder="Escribe tu mensaje... (ej. 'Me ayudas con un perfil para Ing. Minas')" aria-label="Mensaje">
+      <button id="chatbot-send" aria-label="Enviar mensaje">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- Conecta el script (usa tu chatbot.js mejorado) -->
+<script src="chatbot.js"></script>
+<script>
+  // Inicialización ligera si necesitas un entry-point
+  window.addEventListener('DOMContentLoaded', () => {
+    if (typeof CVChatbot === 'undefined') {
+      console.warn('CVChatbot no encontrado — importa chatbot.js primero.');
+      return;
+    }
+
+    // Variables globales para el HTML
+    window.bot = new CVChatbot();
+    window._chatElements = {
+      toggle: document.getElementById('chatbot-toggle'),
+      window: document.getElementById('chatbot-window'),
+      close: document.getElementById('chatbot-close'),
+      send: document.getElementById('chatbot-send'),
+      input: document.getElementById('chatbot-input'),
+      messages: document.getElementById('chatbot-messages'),
+      chips: document.getElementById('suggestion-chips'),
+      themeToggle: document.getElementById('theme-toggle')
+    };
+
+    // Expose for the enhanced script to use
+  });
+</script>
