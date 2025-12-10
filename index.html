@@ -1,212 +1,644 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>CVworking — Generador de CV con IA | Shafurs Garcia Giraldo</title>
-
-  <!-- Tailwind -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVworking | Shafurs Garcia Giraldo – Web & AI Solutions</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- Three.js -->
+  
+  <!-- Librerías -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-  <!-- PDF Generator -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-  <!-- Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Firebase Config (Placeholder para futuro) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <!-- SEO -->
-  <meta name="description" content="CVworking: herramienta gratuita impulsada por IA para crear CV profesionales en minutos. Creado por Shafurs Garcia Giraldo." />
-  <meta name="keywords" content="CV, Currículum, IA, Inteligencia Artificial, minería, empleo, Shafurs Garcia" />
-  <meta name="author" content="Shafurs Garcia Giraldo" />
+  <style>
+    :root { --primary: #3b82f6; --secondary: #8b5cf6; --bg-dark: #050505; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: #e0e0e0; overflow-x: hidden; }
+    h1, h2, h3, .brand-font { font-family: 'Space Grotesk', sans-serif; }
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="CVworking — Generador de CV con IA" />
-  <meta property="og:description" content="Crea tu CV profesional en minutos con Inteligencia Artificial." />
-  <meta property="og:type" content="website" />
+    /* Fondo y Efectos */
+    #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; }
+    .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
+    .glass-input:focus { background: rgba(255, 255, 255, 0.08); border-color: #3b82f6; outline: none; }
 
-  <!-- Performance -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    /* CV APP CONTAINER */
+    .cv-app-container { background-color: #ffffff; color: #1f2937; border-radius: 1.5rem; overflow: hidden; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    
+    /* PAPEL A4 */
+    .paper-a4 {
+      width: 210mm; min-height: 297mm; background: white; color: #333;
+      padding: 0; /* Padding handled by inner containers */
+      margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transform-origin: top center; transition: all 0.3s ease;
+      overflow: hidden; position: relative;
+    }
+    .cv-content { padding: 15mm 20mm; height: 100%; }
+
+    /* --- PLANTILLAS (Mejoradas para funcionar con el HTML actual) --- */
+    
+    /* 1. MODERNA: Limpia, acentos azules, líneas divisorias */
+    .template-modern .cv-header { border-bottom: 3px solid #3b82f6; padding-bottom: 20px; margin-bottom: 25px; }
+    .template-modern h1 { color: #111827; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+    .template-modern .role { color: #3b82f6; font-weight: 600; letter-spacing: 0.5px; }
+    .template-modern .section-title { 
+      font-size: 14px; font-weight: 700; color: #3b82f6; 
+      text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .template-modern .section-title::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+
+    /* 2. CLÁSICA: Serif, Centrado, Elegante */
+    .template-classic { font-family: 'Georgia', serif; }
+    .template-classic .cv-header { text-align: center; border-bottom: 1px double #ccc; padding-bottom: 20px; margin-bottom: 25px; }
+    .template-classic h1 { color: #000; font-size: 32px; margin-bottom: 5px; }
+    .template-classic .role { color: #444; font-style: italic; font-size: 18px; }
+    .template-classic .contact-info { justify-content: center; }
+    .template-classic .section-title { 
+      font-size: 16px; font-weight: bold; color: #000; 
+      border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 15px; text-transform: uppercase;
+    }
+
+    /* 3. BOLD: Header oscuro impactante */
+    .template-bold .cv-header { background-color: #1e293b; padding: 30px 40px; margin: 0 0 30px 0; color: white; }
+    .template-bold h1 { color: white; font-size: 36px; line-height: 1; margin-bottom: 8px; }
+    .template-bold .role { color: #94a3b8; font-weight: 500; font-size: 18px; }
+    .template-bold .contact-info { color: #cbd5e1; margin-top: 15px; }
+    .template-bold .contact-info svg { stroke: #94a3b8; }
+    .template-bold .cv-body { padding: 0 40px 40px 40px; }
+    .template-bold .section-title { 
+      font-size: 18px; font-weight: 800; color: #1e293b; 
+      background: #f1f5f9; padding: 5px 10px; border-left: 4px solid #1e293b; margin-bottom: 15px;
+    }
+
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f0f0f; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+  </style>
 </head>
-
-<body class="antialiased bg-black text-white relative selection:bg-blue-600 selection:text-white">
+<body class="antialiased selection:bg-blue-500 selection:text-white">
 
   <!-- Fondo 3D -->
-  <div id="canvas-container" class="absolute inset-0 -z-10"></div>
+  <div id="canvas-container"></div>
 
-  <!-- Navbar -->
-  <nav class="fixed w-full z-50 glass-panel border-b border-white/10 backdrop-blur-xl">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-
-      <!-- Brand -->
-      <button class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Inicio">
-        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-        <span class="text-xl font-bold tracking-tight brand-font">
-          CVworking<span class="text-blue-500">.ai</span>
-        </span>
-      </button>
-
-      <!-- Menu -->
-      <div class="hidden md:flex items-center gap-6 text-sm">
-        <a href="#cv-engine" class="hover:text-blue-400 transition">Crear CV</a>
-        <button onclick="alert('Versión Beta 1.0')" class="hover:text-blue-400 transition">Versión</button>
+  <!-- NAVBAR -->
+  <nav class="fixed w-full z-50 glass-panel border-b border-white/5 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+          <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+          <span class="text-lg font-bold brand-font tracking-tight text-white hover:text-blue-400 transition">
+            CVworking<span class="text-blue-500">.ai</span>
+          </span>
+        </div>
+        <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+          <a href="#home" class="text-gray-400 hover:text-white transition">Inicio</a>
+          <a href="#cv-engine" class="text-white bg-white/10 px-3 py-1 rounded-full hover:bg-white/20 transition">Creador de CV</a>
+          <a href="#services" class="text-gray-400 hover:text-white transition">Servicios</a>
+          <a href="#contact" class="text-gray-400 hover:text-white transition">Contacto</a>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero -->
-  <section class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
-    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 text-blue-300 text-xs font-mono mb-6 animate-fade-in-up">
-      <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-      Versión 1.0 · By Shafurs Garcia Giraldo
+  <!-- HERO -->
+  <section id="home" class="min-h-screen flex flex-col items-center justify-center relative px-4 text-center pt-10">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 text-blue-300 text-xs font-mono mb-8 animate-fade-in-up">
+      <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> v1.0 Stable · By Shafurs Garcia
     </div>
-
-    <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
-      CVworking  
-      <br />
-      <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent" id="typewriter"></span>
+    
+    <h1 class="text-5xl md:text-8xl font-bold mb-6 leading-tight tracking-tight">
+      Shafurs Garcia<br>
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400" id="typewriter"></span>
     </h1>
+    
+    <p class="text-lg text-gray-400 mb-10 max-w-2xl leading-relaxed">
+      Ingeniero de Minas transformando la industria con <strong>Desarrollo Web & Inteligencia Artificial</strong>.
+      <br>He creado este generador de CV gratuito como muestra de mis capacidades.
+    </p>
+    
+    <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md sm:max-w-none justify-center">
+      <button onclick="document.getElementById('cv-engine').scrollIntoView({behavior: 'smooth'})" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl transition shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 group">
+        <i data-lucide="sparkles" class="w-5 h-5 group-hover:rotate-12 transition"></i> Crear mi CV con IA
+      </button>
+      <button onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})" class="px-8 py-4 glass-panel text-white font-bold rounded-xl hover:bg-white/10 transition border border-white/10 flex items-center justify-center gap-2">
+        Contratar Servicios <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </section>
 
-    <p class="text-gray-300 max-w-2xl text-lg leading-relaxed mb-10">
-      Crea tu CV profesional en minutos con Inteligencia Artificial.  
-      Herramienta gratuita para minería, tecnología, gestión y más.
+  <!-- CV ENGINE -->
+  <section id="cv-engine" class="py-24 relative">
+    <!-- Background Glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[120px] -z-10"></div>
+
+    <div class="max-w-[1400px] mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-5xl font-bold mb-4">
+          Generador de CV <span class="text-blue-500">Profesional</span>
+        </h2>
+        <p class="text-gray-400 max-w-xl mx-auto">
+          Diseñado para pasar los filtros ATS. 100% Gratuito, privado y sin marcas de agua.
+        </p>
+      </div>
+
+      <div class="cv-app-container shadow-2xl flex flex-col lg:flex-row min-h-[850px]">
+        
+        <!-- EDITOR (SIDEBAR) -->
+        <div class="lg:w-1/3 bg-white border-r border-gray-200 flex flex-col h-[850px]">
+          <div class="p-6 border-b border-gray-100 bg-gray-50">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">1</span> Estilo Visual
+            </h3>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setTemplate('modern')" class="template-btn py-2 border border-gray-200 bg-white rounded-lg hover:border-blue-500 hover:text-blue-600 text-xs font-medium transition shadow-sm active">Moderno</button>
+              <button onclick="setTemplate('classic')" class="template-btn py-2 border border-gray-200 bg-white rounded-lg hover:border-blue-500 hover:text-blue-600 text-xs font-medium transition shadow-sm">Clásico</button>
+              <button onclick="setTemplate('bold')" class="template-btn py-2 border border-gray-200 bg-white rounded-lg hover:border-blue-500 hover:text-blue-600 text-xs font-medium transition shadow-sm">Bold</button>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+            <!-- Experiencia Mode -->
+            <div>
+              <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+                Contenido Pre-llenado (Opcional)
+              </label>
+              <div class="flex flex-wrap gap-2">
+                <button onclick="setExperienceMode('none')" class="px-3 py-1.5 text-xs border rounded-full hover:bg-gray-100 text-gray-600 transition">Estudiante</button>
+                <button onclick="setExperienceMode('low')" class="px-3 py-1.5 text-xs border rounded-full hover:bg-gray-100 text-gray-600 transition">Junior</button>
+                <button onclick="setExperienceMode('high')" class="px-3 py-1.5 text-xs border rounded-full hover:bg-gray-100 text-gray-600 transition">Senior</button>
+              </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="space-y-5">
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Datos Personales</label>
+                <input id="cv-name" type="text" placeholder="Nombre completo" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="updatePreview()">
+                <input id="cv-role" type="text" placeholder="Título Profesional (Ej. Ing. Minas)" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm mt-2 focus:ring-2 focus:ring-blue-500 outline-none transition" oninput="updatePreview()">
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <input id="cv-email" type="text" placeholder="Email" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" oninput="updatePreview()">
+                <input id="cv-phone" type="text" placeholder="Teléfono" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" oninput="updatePreview()">
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="block text-xs font-semibold text-gray-700">Perfil Profesional</label>
+                  <button onclick="aiGenerateProfile()" class="text-[10px] font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1 bg-purple-50 px-2 py-0.5 rounded cursor-pointer transition">
+                    <i data-lucide="wand-2" class="w-3 h-3"></i> Generar con IA
+                  </button>
+                </div>
+                <textarea id="cv-summary" rows="4" placeholder="Breve descripción de tu perfil..." class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none transition resize-none" oninput="updatePreview()"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Experiencia Reciente</label>
+                <div class="p-3 border border-gray-200 rounded-lg bg-gray-50/50 space-y-2">
+                  <input id="cv-exp-role" type="text" placeholder="Cargo" class="w-full bg-white border border-gray-200 rounded px-2 py-1.5 text-sm" oninput="updatePreview()">
+                  <input id="cv-exp-company" type="text" placeholder="Empresa | Fechas" class="w-full bg-white border border-gray-200 rounded px-2 py-1.5 text-sm" oninput="updatePreview()">
+                  <textarea id="cv-exp-desc" rows="3" placeholder="• Logros y responsabilidades..." class="w-full bg-white border border-gray-200 rounded px-2 py-1.5 text-sm resize-none" oninput="updatePreview()"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 border-t border-gray-200 bg-white z-10">
+            <button onclick="downloadPDF()" class="w-full py-3.5 bg-gray-900 hover:bg-black text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-2">
+              <i data-lucide="download" class="w-4 h-4"></i> Descargar PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- PREVIEW AREA -->
+        <div class="lg:w-2/3 bg-gray-100 p-4 lg:p-12 overflow-hidden relative flex items-start justify-center">
+          <!-- Toolbar flotante -->
+          <div class="absolute top-4 right-4 flex gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200 z-10">
+            <button class="p-2 hover:bg-gray-100 rounded text-gray-600" onclick="changeZoom(0.1)" title="Zoom In"><i data-lucide="zoom-in" class="w-4 h-4"></i></button>
+            <button class="p-2 hover:bg-gray-100 rounded text-gray-600" onclick="changeZoom(-0.1)" title="Zoom Out"><i data-lucide="zoom-out" class="w-4 h-4"></i></button>
+          </div>
+
+          <!-- El Documento -->
+          <div class="transform-gpu transition-transform duration-300 origin-top" id="preview-container">
+            <div id="cv-preview" class="paper-a4 template-modern">
+              <!-- Header Section -->
+              <div class="cv-header">
+                <h1 id="prev-name" class="text-4xl mb-2">TU NOMBRE</h1>
+                <p id="prev-role" class="role text-xl mb-4">TU TÍTULO PROFESIONAL</p>
+                <div class="contact-info flex gap-6 text-sm flex-wrap">
+                  <span id="prev-email" class="flex items-center gap-1.5 opacity-80">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> email@ejemplo.com
+                  </span>
+                  <span id="prev-phone" class="flex items-center gap-1.5 opacity-80">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> +51 900 000 000
+                  </span>
+                </div>
+              </div>
+
+              <div class="cv-body">
+                <div class="flex flex-col gap-8">
+                  <section>
+                    <div class="section-title">Perfil Profesional</div>
+                    <p id="prev-summary" class="text-sm leading-relaxed text-justify opacity-90">
+                      Este es un espacio para tu resumen profesional. Usa el editor de la izquierda o deja que la IA te sugiera un primer borrador impactante.
+                    </p>
+                  </section>
+
+                  <section>
+                    <div class="section-title">Experiencia Laboral</div>
+                    <div class="mb-4">
+                      <div class="flex justify-between items-baseline mb-1">
+                        <h3 id="prev-exp-role" class="font-bold text-base">Cargo desempeñado</h3>
+                        <span id="prev-exp-company" class="text-xs opacity-70 font-medium">Empresa | Fechas</span>
+                      </div>
+                      <p id="prev-exp-desc" class="text-sm leading-relaxed opacity-90 whitespace-pre-line">
+                        • Describe responsabilidades y logros con verbos de acción.
+                        • Añade resultados medibles cuando sea posible.
+                      </p>
+                    </div>
+                  </section>
+
+                  <section>
+                    <div class="section-title">Habilidades</div>
+                    <div class="flex gap-2 flex-wrap">
+                      <span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium text-gray-700 border border-gray-200">Trabajo en equipo</span>
+                      <span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium text-gray-700 border border-gray-200">Comunicación Efectiva</span>
+                      <span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium text-gray-700 border border-gray-200">Resolución de Problemas</span>
+                      <span class="bg-gray-100 px-2 py-1 rounded text-xs font-medium text-gray-700 border border-gray-200">Inglés Intermedio</span>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF -->
+  <section class="py-16 bg-black/40 border-y border-white/5 backdrop-blur-sm">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div>
+          <div class="text-3xl md:text-4xl font-bold text-white mb-1">100%</div>
+          <div class="text-xs md:text-sm text-gray-500 font-mono uppercase tracking-wide">Gratuito</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-bold text-white mb-1">Privado</div>
+          <div class="text-xs md:text-sm text-gray-500 font-mono uppercase tracking-wide">Procesamiento Local</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-bold text-white mb-1">ATS</div>
+          <div class="text-xs md:text-sm text-gray-500 font-mono uppercase tracking-wide">Friendly Design</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-bold text-white mb-1">IA</div>
+          <div class="text-xs md:text-sm text-gray-500 font-mono uppercase tracking-wide">Powered</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="services" class="py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold mb-4">Soluciones Digitales</h2>
+        <p class="text-gray-400">Desarrollo a medida para potenciar tu negocio.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition duration-300 border border-white/10 group cursor-pointer">
+          <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-500 transition-colors">
+            <i data-lucide="bot" class="w-6 h-6 text-blue-400 group-hover:text-white"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-white">Chatbots IA</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Asistentes virtuales que entienden tu negocio y atienden clientes 24/7.
+          </p>
+        </div>
+        <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition duration-300 border border-white/10 group cursor-pointer">
+          <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-500 transition-colors">
+            <i data-lucide="layout" class="w-6 h-6 text-purple-400 group-hover:text-white"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-white">Aplicaciones Web</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            SaaS, Dashboards y herramientas internas como este generador de CV.
+          </p>
+        </div>
+        <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition duration-300 border border-white/10 group cursor-pointer">
+          <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-500 transition-colors">
+            <i data-lucide="workflow" class="w-6 h-6 text-green-400 group-hover:text-white"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2 text-white">Automatización</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Scripts en Python/JS para eliminar tareas repetitivas y optimizar flujos.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-10 border-t border-white/5 text-xs text-gray-400">
+  <div class="max-w-4xl mx-auto px-4 flex flex-col items-center gap-6">
+
+    <p class="text-center text-[12px] text-gray-400">
+      © 2025 <span class="font-semibold">Shafurs Garcia Giraldo</span>. Todos los derechos reservados.
     </p>
 
-    <a href="#cv-engine" class="px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-500 transition font-bold shadow-lg shadow-blue-600/30 flex items-center gap-2">
-      EMPEZAR GRATIS
-      <i data-lucide="arrow-right" class="w-4 h-4"></i>
-    </a>
-  </section>
+    <!-- Perfiles -->
+    <div class="flex flex-col items-center gap-3">
+      <h3 class="text-sm font-semibold text-gray-300">
+        Perfiles
+      </h3>
 
-  <!-- CV Engine -->
-  <section id="cv-engine" class="py-20 px-4 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div class="flex items-center gap-6">
 
-      <!-- Editor -->
-      <aside class="lg:col-span-4">
-        <div class="glass-panel rounded-2xl p-6 h-full flex flex-col">
+        <!-- LinkedIn -->
+        <a href="http://www.linkedin.com/in/shafursgarciagiraldo"
+           target="_blank" rel="noopener noreferrer"
+           class="group flex flex-col items-center gap-2">
+          <span
+            class="w-12 h-12 rounded-full border border-white/10 bg-[#0A66C2] flex items-center justify-center shadow-md shadow-[#0A66C2]/40 transition-transform group-hover:scale-110">
+            <span class="text-white font-bold text-lg leading-none">in</span>
+          </span>
+          <span class="text-[11px] text-gray-400 group-hover:text-white">
+            LinkedIn
+          </span>
+        </a>
 
-          <!-- Header -->
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-lg font-bold flex items-center gap-2">
-              <i data-lucide="edit-3" class="text-blue-400"></i> Editor
-            </h3>
+        <!-- Facebook -->
+        <a href="http://www.facebook.com/shafursgarciagiraldo"
+           target="_blank" rel="noopener noreferrer"
+           class="group flex flex-col items-center gap-2">
+          <span
+            class="w-12 h-12 rounded-full border border-white/10 bg-[#1877F2] flex items-center justify-center shadow-md shadow-[#1877F2]/40 transition-transform group-hover:scale-110">
+            <span class="text-white font-bold text-xl leading-none">f</span>
+          </span>
+          <span class="text-[11px] text-gray-400 group-hover:text-white">
+            Facebook
+          </span>
+        </a>
 
-            <select id="templateSelector" onchange="changeTemplate()" class="glass-input text-xs px-3 py-1 rounded-lg bg-black/20">
-              <option value="template-modern">Moderna</option>
-              <option value="template-classic">Clásica</option>
-              <option value="template-bold">Bold</option>
-            </select>
-          </div>
+        <!-- Instagram -->
+        <a href="http://instagram.com/shafursgarciagiraldo"
+           target="_blank" rel="noopener noreferrer"
+           class="group flex flex-col items-center gap-2">
+          <span
+            class="w-12 h-12 rounded-full border border-white/10 bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] flex items-center justify-center shadow-md shadow-[#DD2A7B]/40 transition-transform group-hover:scale-110">
+            <span class="text-white font-bold text-sm tracking-wide leading-none">IG</span>
+          </span>
+          <span class="text-[11px] text-gray-400 group-hover:text-white">
+            Instagram
+          </span>
+        </a>
 
-          <!-- Inputs -->
-          <div class="space-y-3 overflow-y-auto custom-scrollbar pr-1">
-            <input id="inputName" type="text" placeholder="Tu Nombre Completo" class="glass-input" oninput="updateCV()" />
-            <input id="inputRole" type="text" placeholder="Cargo Profesional" class="glass-input" oninput="updateCV()" />
-
-            <div class="grid grid-cols-2 gap-2">
-              <input id="inputEmail" type="email" placeholder="Email" class="glass-input" oninput="updateCV()" />
-              <input id="inputPhone" type="text" placeholder="Teléfono" class="glass-input" oninput="updateCV()" />
-            </div>
-
-            <input id="inputLocation" type="text" placeholder="Ciudad, País" class="glass-input" oninput="updateCV()" />
-
-            <!-- IA -->
-            <div class="pt-4 border-t border-white/10">
-              <div class="flex justify-between items-center mb-2">
-                <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Perfil Profesional</label>
-
-                <button onclick="askAI()" class="text-xs bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-1 rounded-full flex items-center gap-1 shadow hover:scale-105 transition">
-                  <i data-lucide="sparkles" class="w-3 h-3"></i>
-                  Generar con IA
-                </button>
-              </div>
-
-              <textarea id="inputSummary" rows="4" class="glass-input resize-none" placeholder="Describe tu experiencia o usa IA..." oninput="updateCV()"></textarea>
-
-              <div id="ai-suggestions-container" class="hidden mt-3">
-                <p class="text-xs text-gray-500 mb-2">Sugerencias:</p>
-                <div id="ai-chips" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar"></div>
-              </div>
-            </div>
-          </div>
-
-          <button onclick="downloadPDF()" class="mt-6 w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition">
-            <i data-lucide="download" class="w-4 h-4"></i>
-            DESCARGAR PDF
-          </button>
-
-        </div>
-      </aside>
-
-      <!-- Preview -->
-      <main class="lg:col-span-8">
-        <div class="bg-black/40 border border-white/10 p-8 rounded-2xl h-full overflow-y-auto custom-scrollbar">
-          <div id="cv-preview" class="paper-a4 template-modern shadow-xl mx-auto"></div>
-        </div>
-      </main>
-
-    </div>
-  </section>
-
-  <!-- Chat -->
-  <div class="fixed bottom-6 right-6 z-50">
-    <div id="chat-window" class="hidden w-80 h-96 glass-panel rounded-xl overflow-hidden shadow-xl">
-
-      <div class="bg-blue-600/90 px-3 py-2 flex items-center justify-between">
-        <h3 class="font-semibold text-sm flex items-center gap-2">
-          <i data-lucide="bot" class="w-4 h-4"></i>
-          Asistente CV
-        </h3>
-        <button onclick="toggleChat()" class="hover:bg-white/30 rounded p-1">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <div id="chat-messages" class="flex-1 p-3 overflow-y-auto custom-scrollbar bg-black/40 text-sm"></div>
-
-      <div class="p-3 bg-black/20 flex gap-2">
-        <input id="chat-input" type="text" placeholder="Escribe aquí..." class="flex-1 glass-input py-2 px-3 text-xs" onkeypress="handleChatEnter(event)" />
-        <button onclick="sendMessage()" class="bg-blue-600 px-3 py-2 rounded-lg">
-          <i data-lucide="send"></i>
-        </button>
       </div>
     </div>
 
-    <button onclick="toggleChat()" class="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg hover:scale-110 transition">
-      <i data-lucide="message-square" class="w-6 h-6"></i>
-    </button>
+    <p class="mt-1 text-[11px] text-gray-500 text-center">
+      Generador de CV gratuito para estudiantes y jóvenes profesionales. Plantillas protegidas por licencia de uso personal.
+    </p>
+
   </div>
+</footer>
 
-  <!-- Footer -->
-  <footer class="border-t border-white/10 py-10 bg-black/40 mt-20">
-    <div class="max-w-6xl mx-auto text-center">
-      <p class="text-gray-400 text-sm mb-3">© 2025 Shafurs Garcia Giraldo — Todos los derechos reservados.</p>
-
-      <div class="flex items-center justify-center gap-5 text-gray-400">
-        <i data-lucide="github" class="w-5 h-5 hover:text-white transition cursor-pointer"></i>
-        <i data-lucide="linkedin" class="w-5 h-5 hover:text-blue-300 transition cursor-pointer"></i>
-        <i data-lucide="mail" class="w-5 h-5 hover:text-white transition cursor-pointer"></i>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Scripts -->
-  <script src="chatbot.js"></script>
-  <script src="script.js"></script>
   <script>
+    // Inicializar iconos
     lucide.createIcons();
-  </script>
 
+    // --- LÓGICA VISUAL DEL PREVIEW ---
+    let currentScale = 0.7;
+    
+    function updateZoom() {
+      const container = document.getElementById('preview-container');
+      const isMobile = window.innerWidth < 768;
+      const baseScale = isMobile ? 0.45 : currentScale;
+      container.style.transform = `scale(${baseScale})`;
+      // Ajustar margen negativo para que no quede espacio blanco excesivo abajo
+      container.style.marginBottom = `-${(1 - baseScale) * 100}%`;
+    }
+
+    function changeZoom(delta) {
+      currentScale = Math.max(0.4, Math.min(1.2, currentScale + delta));
+      updateZoom();
+    }
+
+    window.addEventListener('resize', updateZoom);
+    updateZoom(); // Init
+
+    // --- LÓGICA DEL CV ---
+
+    function updatePreview() {
+      const fields = ['name', 'role', 'email', 'phone', 'summary', 'exp-role', 'exp-company', 'exp-desc'];
+      
+      fields.forEach(field => {
+        const input = document.getElementById(`cv-${field}`);
+        const preview = document.getElementById(`prev-${field}`);
+        if(input && preview) {
+          // Para los campos de contacto, mantenemos el icono si existe
+          if(field === 'email') {
+            preview.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-1"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> ${input.value || 'email@ejemplo.com'}`;
+          } else if (field === 'phone') {
+            preview.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline mr-1"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> ${input.value || '+51 900 000 000'}`;
+          } else {
+            preview.innerText = input.value || input.getAttribute('placeholder');
+          }
+        }
+      });
+    }
+
+    function setTemplate(type) {
+      const preview = document.getElementById('cv-preview');
+      preview.className = `paper-a4 template-${type}`;
+      
+      // Feedback visual en botones
+      document.querySelectorAll('.template-btn').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'text-blue-600', 'ring-2', 'ring-blue-100');
+        if(btn.getAttribute('onclick').includes(type)) {
+          btn.classList.add('border-blue-500', 'text-blue-600', 'ring-2', 'ring-blue-100');
+        }
+      });
+    }
+
+    function setExperienceMode(mode) {
+      const texts = {
+        none: {
+          summary: 'Estudiante motivado con sólida formación académica y capacidad de aprendizaje rápido. Busco mi primera oportunidad profesional para aportar valor y desarrollar mis habilidades en un entorno real.',
+          role: 'Proyecto Académico / Voluntariado',
+          company: 'Universidad | 2023',
+          desc: '• Liderazgo en proyectos grupales de investigación.\n• Participación activa en talleres y seminarios.'
+        },
+        low: {
+          summary: 'Profesional junior con experiencia inicial en prácticas pre-profesionales. Orientado a resultados, proactivo y con gran capacidad para trabajar en equipo y resolver problemas bajo supervisión.',
+          role: 'Practicante / Asistente',
+          company: 'Empresa S.A.C | 2022 - 2023',
+          desc: '• Apoyo en la gestión administrativa y operativa del área.\n• Elaboración de reportes básicos y atención a requerimientos internos.'
+        },
+        high: {
+          summary: 'Profesional experimentado con amplia trayectoria en gestión y optimización de procesos. Experto en liderar equipos multidisciplinarios y ejecutar estrategias que incrementan la eficiencia operativa.',
+          role: 'Analista Senior / Coordinador',
+          company: 'Corporación Global | 2020 - Presente',
+          desc: '• Incremento de la productividad del equipo en un 20%.\n• Implementación de nuevas metodologías de trabajo ágil.\n• Supervisión directa de proyectos clave.'
+        }
+      };
+
+      const data = texts[mode];
+      if (data) {
+        document.getElementById('cv-summary').value = data.summary;
+        document.getElementById('cv-exp-role').value = data.role;
+        document.getElementById('cv-exp-company').value = data.company;
+        document.getElementById('cv-exp-desc').value = data.desc;
+        updatePreview();
+      }
+    }
+
+    function aiGenerateProfile() {
+      const btn = document.querySelector('button[onclick="aiGenerateProfile()"]');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<i class="animate-spin lucide-loader-2 w-3 h-3"></i> Generando...`;
+      
+      setTimeout(() => {
+        const roles = ["Ingeniero Innovador", "Desarrollador Web", "Especialista en Datos"];
+        const role = document.getElementById('cv-role').value || roles[Math.floor(Math.random()*roles.length)];
+        
+        const text = `Profesional altamente cualificado en el campo de ${role}, con un enfoque analítico y orientado a la resolución de problemas complejos. Apasionado por la tecnología y la mejora continua, con capacidad demostrada para adaptarse a entornos dinámicos y aportar soluciones creativas que impulsan el éxito del negocio.`;
+        
+        document.getElementById('cv-summary').value = text;
+        updatePreview();
+        btn.innerHTML = originalText;
+      }, 1000);
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('cv-preview');
+      const name = document.getElementById('cv-name').value || 'CV';
+      
+      const opt = {
+        margin: 0,
+        filename: `CV_${name.replace(/\s+/g, '_')}.pdf`,
+        image: { type: 'jpeg', quality: 1 }, // Máxima calidad imagen
+        html2canvas: { 
+          scale: 3, // Alta resolución (3x) para texto nítido
+          useCORS: true,
+          letterRendering: true
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      const btn = document.querySelector('button[onclick="downloadPDF()"]');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generando PDF HD...`;
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      });
+    }
+
+    // --- EFECTOS VISUALES (3D & TYPEWRITER) ---
+    const initThree = () => {
+      const container = document.getElementById('canvas-container');
+      if(!container) return;
+      
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      // Partículas azules flotantes
+      const geometry = new THREE.BufferGeometry();
+      const count = 400;
+      const posArray = new Float32Array(count * 3);
+      for(let i=0; i<count*3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 18; 
+      }
+      geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      const material = new THREE.PointsMaterial({
+        size: 0.04,
+        color: 0x3b82f6, // Azul principal
+        transparent: true,
+        opacity: 0.6
+      });
+      const particles = new THREE.Points(geometry, material);
+      scene.add(particles);
+      camera.position.z = 4;
+
+      let mouseX = 0;
+      let mouseY = 0;
+      
+      // Efecto suave de movimiento con mouse
+      document.addEventListener('mousemove', (event) => {
+        mouseX = event.clientX * 0.0001;
+        mouseY = event.clientY * 0.0001;
+      });
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        particles.rotation.y += 0.0005;
+        particles.rotation.x += 0.0002;
+        
+        // Sutil reacción al mouse
+        particles.rotation.y += 0.05 * (mouseX - particles.rotation.y);
+        particles.rotation.x += 0.05 * (mouseY - particles.rotation.x);
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    };
+
+    const typeText = () => {
+      const texts = ["Web & AI Solutions", "Minería de Datos", "Automatización"];
+      let count = 0;
+      let index = 0;
+      let currentText = "";
+      let letter = "";
+      
+      (function type() {
+        if (count === texts.length) count = 0;
+        currentText = texts[count];
+        letter = currentText.slice(0, ++index);
+        const el = document.getElementById('typewriter');
+        if(el) el.textContent = letter;
+        
+        if (letter.length === currentText.length) {
+          count++;
+          index = 0;
+          setTimeout(type, 2000);
+        } else {
+          setTimeout(type, 80);
+        }
+      })();
+    };
+
+    window.addEventListener('load', () => {
+      initThree();
+      typeText();
+      // Set default active state
+      setTemplate('modern');
+    });
+  </script>
 </body>
 </html>
