@@ -1,0 +1,55 @@
+/* ===== Estilos Base ===== */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Vidrio tipo glass */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.9rem;
+}
+
+.glass-input::placeholder {
+  color: #aaa;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+/* A4 para el CV */
+.paper-a4 {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 25mm;
+  background: white;
+  color: black;
+  font-family: 'Inter', sans-serif;
+}
+
+.template-modern {
+  border-left: 6px solid #2563eb;
+}
+
+.template-classic {
+  border-top: 4px solid #4b5563;
+}
+
+.template-bold {
+  border: 4px solid #8b5cf6;
+}
